@@ -1,0 +1,26 @@
+# Golem component manifest for the DUR-1 spike (SKETCH).
+#
+# This pins the *intent*, not a verified build. The TS->WASM toolchain (Golem
+# CLI + jco/componentize-js versions, the exact host-import wiring) is the
+# unknown the spike exists to resolve — do not treat the commands below as
+# known-good until the spike has actually run them.
+#
+# Refs to verify during the spike:
+#   - https://learn.golem.cloud  (TypeScript component guide)
+#   - jco / componentize-js for the JS->WASM componentize step
+#
+# Once a real build is achieved, replace the placeholder commands with the
+# verified ones and record toolchain versions in spike/README.md.
+
+components:
+  duraston:spike:
+    template: ts
+    sourceWit: ../wit
+    generatedWit: wit-generated
+    componentWasm: spike.wasm
+    build:
+      - command: pnpm install
+      - command: pnpm build:js
+      # TODO(DUR-1): the actual componentize step, e.g.
+      #   jco componentize dist/main.js --wit ../wit --world-name spike --out spike.wasm
+      # Pin once verified.

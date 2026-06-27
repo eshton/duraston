@@ -1,0 +1,18 @@
+{
+  "name": "@duraston/spike",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "DUR-1: TS->WASM feasibility spike. Does the astonagent agent loop compile and run as a Golem WebAssembly component?",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build:js": "tsc",
+    "build:wasm": "echo 'TODO: run the Golem/jco componentize step here once the toolchain is pinned (see README.md)' && exit 1",
+    "build": "pnpm build:js && pnpm build:wasm",
+    "clean": "rm -rf dist *.wasm *.tsbuildinfo"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.0",
+    "typescript": "^5.6.0"
+  }
+}

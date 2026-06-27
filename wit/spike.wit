@@ -1,0 +1,19 @@
+// WIT world for the DUR-1 spike component.
+//
+// Golem components are WebAssembly components described by a WIT world. This is
+// the smallest world that exercises the agent loop: a single `run` export that
+// returns a transcript. Once the spike proves the toolchain works, the real
+// worker (DUR-2) grows this into invoke/stream/resume (DUR-5).
+//
+// This file is a sketch to pin the shape of the interface — the exact host
+// imports (durable LLM, key-value, etc.) depend on the Golem SDK version
+// chosen in DUR-3/DUR-6.
+
+package duraston:spike@0.1.0;
+
+world spike {
+  /// Run the minimal agent loop and return the final transcript as text.
+  /// Takes the initial user prompt; the loop, model, and tools are internal
+  /// to the component for the spike.
+  export run: func(prompt: string) -> string;
+}

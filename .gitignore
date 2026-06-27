@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+out/
+*.wasm
+*.tsbuildinfo
+
+# Golem
+.golem/
+golem-temp/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Test / coverage
+coverage/
