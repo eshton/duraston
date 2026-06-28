@@ -63,11 +63,19 @@ monotonic `seq`, so reconnect = replay-since-cursor and resume = deliver input t
 a suspended session. `SessionGateway` wraps a `DurableSession` and is fully
 tested in-process. See **[DUR-5.md](./DUR-5.md)**.
 
+## DUR-4 — persistence split (oplog vs Neon)
+
+The oplog is the source of truth for execution; Neon/Postgres is a **derived
+read-model** for the UI, built by projecting the DUR-5 event stream through the
+DUR-8 `Store`. No dual-writes; the read-model is idempotent and rebuildable from
+the stream. See **[DUR-4.md](./DUR-4.md)**.
+
 ### Layout (additions)
 
 ```
 src/providers/        DUR-3: Provider port + Anthropic / OpenAI-Ollama adapters
 src/boundary/         DUR-5: UI<->worker protocol, SessionGateway, SSE transport
+src/history/          DUR-4: HistoryProjector — UI read-model from the event stream
 src/golem/            DUR-2/3: @agent() deploy target + golem:llm reference
 ```
 

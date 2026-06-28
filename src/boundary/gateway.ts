@@ -27,6 +27,7 @@ type Listener = (event: ServerEvent) => void;
 
 export class SessionGateway {
   readonly sessionId: string;
+  private readonly prompt: string;
   private readonly log: ServerEvent[] = [];
   private readonly listeners = new Set<Listener>();
   private readonly session: DurableSession;
@@ -35,6 +36,7 @@ export class SessionGateway {
 
   constructor(opts: GatewayOptions) {
     this.sessionId = opts.sessionId;
+    this.prompt = opts.prompt;
     const instrumented: LlmFn = (messages, tools) => {
       this.emit({ type: "model_call", step: this.liveStep++ });
       return opts.provider(messages, tools);
@@ -53,7 +55,7 @@ export class SessionGateway {
   async invoke(): Promise<void> {
     if (this.started) return;
     this.started = true;
-    this.emit({ type: "started", sessionId: this.sessionId });
+    this.emit({ type: "started", sessionId: this.sessionId, prompt: this.prompt });
     await this.drive();
   }
 

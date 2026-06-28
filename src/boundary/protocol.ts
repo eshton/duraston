@@ -20,7 +20,7 @@ export type ClientMessage =
 
 /** Server -> client, streamed. `seq` is monotonic per session (0-based). */
 export type ServerEvent =
-  | { seq: number; type: "started"; sessionId: string }
+  | { seq: number; type: "started"; sessionId: string; prompt: string }
   /** A live model call began (step index). Replayed steps do NOT emit this. */
   | { seq: number; type: "model_call"; step: number }
   /** Token/partial-text streaming hook (fed by provider streaming — DUR-3/golem:llm). */
