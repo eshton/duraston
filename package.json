@@ -1,0 +1,22 @@
+{
+  "name": "duraston",
+  "version": "0.1.0",
+  "description": "A personal concierge agent running on the Golem durable agent runtime",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "golem build",
+    "deploy": "golem deploy",
+    "repl": "golem repl",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@golemcloud/golem-ts-sdk": "^1.1.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "typescript": "^5.9.0"
+  }
+}

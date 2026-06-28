@@ -1,0 +1,21 @@
+# Golem application manifest for duraston.
+#
+# NOTE: The canonical way to generate this file is the Golem CLI:
+#   golem new --template ts --component-name duraston:concierge --yes duraston
+# This hand-written version mirrors the documented conventions so the project
+# is readable without the CLI. Once the CLI is available, prefer regenerating
+# (or validating) the build pipeline with `golem build`, which fills in the
+# full multi-stage pipeline (typecheck -> metadata gen -> rollup bundle ->
+# QuickJS injection -> wrapper generation -> WIT linking).
+
+components:
+  duraston:concierge:
+    template: ts
+    sourceWit: wit
+    generatedWit: wit-generated
+    sourceFiles:
+      - src/concierge-agent.ts
+      - src/reminder-agent.ts
+      - src/inbox-agent.ts
+      - src/research-agent.ts
+      - src/types.ts

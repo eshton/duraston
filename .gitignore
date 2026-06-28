@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Golem / build pipeline outputs
+.agent/
+.metadata/
+dist/
+build/
+*.wasm
+target/
+
+# TypeScript
+*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.log
