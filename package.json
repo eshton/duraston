@@ -11,7 +11,8 @@
     "inspect": "jco wit dist/agent.wasm",
     "demo": "jco transpile dist/agent.wasm -o dist/transpiled && node scripts/demo.mjs",
     "build:durable": "esbuild src/durable/index.ts --bundle --format=esm --platform=node --outfile=dist/durable.js",
-    "test": "npm run build:durable && node --test",
+    "build:data": "esbuild src/data/index.ts --bundle --format=esm --platform=node --packages=external --outfile=dist/data.js",
+    "test": "npm run build:durable && npm run build:data && node --experimental-sqlite --test",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

@@ -28,8 +28,15 @@ does not re-call the LLM or re-run a tool) and **suspend/resume** awaiting user
 input. The real `@agent()` deploy wrapper (`src/golem/agent.ts`) binds the same
 loop to the Golem TS SDK. See **[DUR-2.md](./DUR-2.md)**.
 
+## DUR-8 — WASM-compatible data layer
+
+`better-sqlite3` can't cross to WASM, so in-worker tools/state use a single
+`Store` port with three WASM-friendly backends: agent-local (oplog),
+**Golem per-agent SQLite** (`node:sqlite`), and **external over HTTP** (Neon/
+PostgREST via `fetch`). All backends share one contract. See **[DUR-8.md](./DUR-8.md)**.
+
 ```bash
-npm test   # builds dist/durable.js, runs the durability tests
+npm test   # builds + runs all DUR-2 and DUR-8 tests
 ```
 
 ### Layout
@@ -37,10 +44,11 @@ npm test   # builds dist/durable.js, runs the durability tests
 ```
 src/                  DUR-1 spike: runAgent loop, tools (zod), fetch provider
 src/durable/          DUR-2: durable loop + in-memory oplog harness
+src/data/             DUR-8: Store port + memory/sqlite/http backends, stateful tools
 src/golem/agent.ts    DUR-2: real @agent() deploy target (builds under DUR-9)
 wit/agent.wit         the agent-worker component world
 probe/                isolated component proving wasi:http fetch works
-test/                 durability behavioral tests
+test/                 behavioral tests (durability + data layer)
 scripts/demo.mjs      invoke the built component through jco's WASI shim
 ```
 
