@@ -55,10 +55,19 @@ for free, max carryover; Ollama = a base-URL swap), keep `golem:llm` as a
 drop-in option. The loop runs unchanged when the provider is swapped. See
 **[DUR-3.md](./DUR-3.md)**.
 
+## DUR-5 — UI↔worker boundary
+
+The contract for the Vercel frontend to **invoke** a worker, **stream** results
+(SSE), and **resume/reconnect** a suspended session. Every event carries a
+monotonic `seq`, so reconnect = replay-since-cursor and resume = deliver input to
+a suspended session. `SessionGateway` wraps a `DurableSession` and is fully
+tested in-process. See **[DUR-5.md](./DUR-5.md)**.
+
 ### Layout (additions)
 
 ```
 src/providers/        DUR-3: Provider port + Anthropic / OpenAI-Ollama adapters
+src/boundary/         DUR-5: UI<->worker protocol, SessionGateway, SSE transport
 src/golem/            DUR-2/3: @agent() deploy target + golem:llm reference
 ```
 
