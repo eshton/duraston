@@ -1,0 +1,15 @@
+package duraston:agent@0.1.0;
+
+/// The durable agent worker surface that DUR-2 will eventually map onto a
+/// Golem worker (agent-per-session). For the DUR-1 spike we only need to prove
+/// that a representative agent loop compiles and links as a component export.
+world agent-worker {
+  /// Run one agent session to completion.
+  ///
+  /// Mirrors astonagent runAgent(): seed the conversation with `prompt`, then
+  /// loop { call provider -> if tool_use, run tools & feed results back -> else
+  /// return text } until the model stops or max-steps is hit.
+  ///
+  /// Returns the final assistant text, or an error string on failure.
+  export run-session: func(prompt: string) -> result<string, string>;
+}

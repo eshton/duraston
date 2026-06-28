@@ -1,0 +1,24 @@
+{
+  "name": "duraston-spike",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "DUR-1 feasibility spike: compile a representative astonagent agent loop (TS) to a Golem-compatible WASM component.",
+  "scripts": {
+    "build:js": "node esbuild.config.mjs",
+    "build:wasm": "jco componentize dist/component.js --wit wit/agent.wit --world-name agent-worker --out dist/agent.wasm",
+    "build": "npm run build:js && npm run build:wasm",
+    "inspect": "jco wit dist/agent.wasm",
+    "demo": "jco transpile dist/agent.wasm -o dist/transpiled && node scripts/demo.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@bytecodealliance/componentize-js": "^0.18.4",
+    "@bytecodealliance/jco": "^1.16.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "zod": "^3.24.0"
+  }
+}

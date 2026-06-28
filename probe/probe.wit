@@ -1,0 +1,4 @@
+package duraston:probe@0.1.0;
+world http-probe {
+  export check: func(url: string) -> result<string, string>;
+}
