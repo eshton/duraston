@@ -70,13 +70,22 @@ read-model** for the UI, built by projecting the DUR-5 event stream through the
 DUR-8 `Store`. No dual-writes; the read-model is idempotent and rebuildable from
 the stream. See **[DUR-4.md](./DUR-4.md)**.
 
+## DUR-7 — secrets/config injection
+
+Ambient `process.env` doesn't cross into the sandbox (DUR-1), so config/secrets
+arrive via a `ConfigSource` port (Golem `wasi:config` in prod, a map in dev).
+Secrets are wrapped in a redacting `SecretValue`, and the provider is built from
+config — so Anthropic⇄Ollama is a config change, not a redeploy. See
+**[DUR-7.md](./DUR-7.md)**.
+
 ### Layout (additions)
 
 ```
 src/providers/        DUR-3: Provider port + Anthropic / OpenAI-Ollama adapters
 src/boundary/         DUR-5: UI<->worker protocol, SessionGateway, SSE transport
 src/history/          DUR-4: HistoryProjector — UI read-model from the event stream
-src/golem/            DUR-2/3: @agent() deploy target + golem:llm reference
+src/config/           DUR-7: ConfigSource port, SecretValue, provider-from-config
+src/golem/            DUR-2/3/7: @agent() deploy target, golem:llm + golem-config
 ```
 
 ### Layout

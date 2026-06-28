@@ -5,6 +5,6 @@
     "types": [],
     "experimentalDecorators": true
   },
-  "include": ["src/golem/**/*.ts", "src/provider.ts", "src/tools.ts", "src/durable/**/*.ts", "src/data/**/*.ts", "src/globals.d.ts"],
+  "include": ["src/golem/**/*.ts", "src/provider.ts", "src/tools.ts", "src/durable/**/*.ts", "src/data/**/*.ts", "src/providers/**/*.ts", "src/config/**/*.ts", "src/boundary/**/*.ts", "src/history/**/*.ts", "src/globals.d.ts"],
   "exclude": []
 }

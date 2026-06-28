@@ -36,23 +36,20 @@ import {
 } from "@golemcloud/golem-ts-sdk";
 
 import { DurableSession } from "../durable/index.js";
-import { createMessage, type Message, type ProviderResponse } from "../provider.js";
+import { asLlmFn } from "../providers/provider.js";
+import { providerFromConfig } from "../config/factory.js";
+import { GolemConfig } from "./golem-config.js";
 import { toolSpecs } from "../tools.js";
-
-// Provider key comes from Golem Config/Secret (DUR-7), injected into the
-// sandbox — NOT ambient process.env, which DUR-1 showed does not cross in.
-declare const GOLEM_CONFIG: { get(key: string): string | undefined };
-
-/** The durable provider call: plain fetch, which Golem journals exactly-once. */
-async function llm(messages: Message[], tools: unknown[]): Promise<ProviderResponse> {
-  const apiKey = GOLEM_CONFIG.get("ANTHROPIC_API_KEY") ?? "";
-  return createMessage({ apiKey }, messages, tools);
-}
 
 /**
  * One worker instance per concierge session (agent-per-session). The conversation
  * state lives in durable class fields; a crash/relocation resumes exactly where
  * it left off, and `ask_user` tool calls suspend the worker on a Golem promise.
+ *
+ * The provider is built from injected Golem config/secrets (DUR-7) — NOT ambient
+ * process.env, which DUR-1 showed does not cross into the sandbox. Provider
+ * choice + keys come from config, so swapping Anthropic <-> Ollama (DUR-3) is a
+ * config change, not a redeploy.
  */
 @agent()
 export class ConciergeAgent extends BaseAgent {
@@ -60,7 +57,8 @@ export class ConciergeAgent extends BaseAgent {
 
   constructor(private readonly prompt0: string) {
     super();
-    this.session = new DurableSession(prompt0, llm);
+    const provider = providerFromConfig(new GolemConfig());
+    this.session = new DurableSession(prompt0, asLlmFn(provider));
   }
 
   @prompt("Run the concierge session to completion, suspending for user input.")
