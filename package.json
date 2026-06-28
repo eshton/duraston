@@ -10,6 +10,8 @@
     "build": "npm run build:js && npm run build:wasm",
     "inspect": "jco wit dist/agent.wasm",
     "demo": "jco transpile dist/agent.wasm -o dist/transpiled && node scripts/demo.mjs",
+    "build:durable": "esbuild src/durable/index.ts --bundle --format=esm --platform=node --outfile=dist/durable.js",
+    "test": "npm run build:durable && node --test",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
