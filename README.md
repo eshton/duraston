@@ -78,6 +78,13 @@ Secrets are wrapped in a redacting `SecretValue`, and the provider is built from
 config — so Anthropic⇄Ollama is a config change, not a redeploy. See
 **[DUR-7.md](./DUR-7.md)**.
 
+## DUR-10 — observability
+
+Structured logging (with secret redaction), an oplog-journal renderer
+(`inspectJournal`), and a stream diagnoser (`diagnoseStream`: is a session
+running / suspended-on-what / done / errored?) — the primitives for debugging
+long-lived durable workers. See **[DUR-10.md](./DUR-10.md)**.
+
 ### Layout (additions)
 
 ```
@@ -85,8 +92,16 @@ src/providers/        DUR-3: Provider port + Anthropic / OpenAI-Ollama adapters
 src/boundary/         DUR-5: UI<->worker protocol, SessionGateway, SSE transport
 src/history/          DUR-4: HistoryProjector — UI read-model from the event stream
 src/config/           DUR-7: ConfigSource port, SecretValue, provider-from-config
+src/observability/    DUR-10: structured logger + oplog/stream inspector
 src/golem/            DUR-2/3/7: @agent() deploy target, golem:llm + golem-config
 ```
+
+## Ticket status
+
+Foundations for **DUR-1 … DUR-10** all live on this branch (28 tests, two
+typecheck configs). Per-ticket write-ups: DUR-1 `FINDINGS.md`, others
+`DUR-N.md`. The remaining gate is running on a live Golem worker — see
+**[DUR-6.md](./DUR-6.md)**.
 
 ### Layout
 

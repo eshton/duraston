@@ -24,3 +24,11 @@ declare function fetch(
 declare class TextDecoder {
   decode(input?: Uint8Array): string;
 }
+
+/** Console, provided by the host runtime (StarlingMonkey / Node). */
+declare const console: {
+  log(...args: unknown[]): void;
+  warn(...args: unknown[]): void;
+  error(...args: unknown[]): void;
+  debug(...args: unknown[]): void;
+};
