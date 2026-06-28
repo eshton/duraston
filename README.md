@@ -76,6 +76,22 @@ await me.triageMessage({ id: "m1", from: "alice@example.com", subject: "Lunch?",
 await me.research({ topic: "noise-cancelling headphones under $300" })
 ```
 
+## Project tracking
+
+Work on duraston is tracked in **Rooster** under the **Duraston** project (key
+prefix **`DUR`**) — e.g. `DUR-1`, `DUR-2`. The backlog frames this repo as an
+exploration of running [astonagent](https://github.com/eshton/astonagent) agents on
+Golem's durable-execution runtime, gated on a TS→WASM feasibility spike (`DUR-1`);
+everything else is **`blocked-by-spike`** until that lands.
+
+Conventions:
+
+- **Labels** group work by area: `golem`, `spike`, `providers`, `persistence`,
+  `api`, `ops`, plus `blocked-by-spike` for anything downstream of `DUR-1`.
+- Reference tickets by key in commits and PRs (e.g. `DUR-2: extract runAgent worker`).
+- New workstreams should become `DUR` tickets before code lands, so the backlog stays
+  the source of truth for scope.
+
 ## Status & caveats
 
 - Golem Cloud is in **Developer Preview** (paid GA with SLAs targeted Q3 2026). The
