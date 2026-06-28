@@ -46,8 +46,9 @@ export async function createMessage(
   cfg: ProviderConfig,
   messages: Message[],
   tools: unknown[],
+  fetchImpl: typeof fetch = fetch,
 ): Promise<ProviderResponse> {
-  const res = await fetch(API_URL, {
+  const res = await fetchImpl(API_URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",

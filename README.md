@@ -46,6 +46,22 @@ deploy target against the real SDK), tests, and a jco component smoke build;
 the gated deploy workflow installs the Golem CLI, runs `golem app build` (cached)
 and a reviewer-gated `golem app deploy`. See **[DUR-9.md](./DUR-9.md)**.
 
+## DUR-3 — provider abstraction
+
+A `Provider` port behind the loop's `llm` seam: an Anthropic adapter (reuses the
+DUR-1 fetch client) and an OpenAI/**Ollama**-compatible adapter, plus a
+`golem:llm` reference. Decision: adapt `@astonagent/providers` (proven, durable
+for free, max carryover; Ollama = a base-URL swap), keep `golem:llm` as a
+drop-in option. The loop runs unchanged when the provider is swapped. See
+**[DUR-3.md](./DUR-3.md)**.
+
+### Layout (additions)
+
+```
+src/providers/        DUR-3: Provider port + Anthropic / OpenAI-Ollama adapters
+src/golem/            DUR-2/3: @agent() deploy target + golem:llm reference
+```
+
 ### Layout
 
 ```
