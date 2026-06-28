@@ -1,0 +1,48 @@
+name: CI
+
+# Runs on every PR and push to the working branches. Fast gates only — no Golem
+# toolchain or credentials needed. The Golem build/deploy path lives in
+# deploy.yml so PRs stay quick and credential-free.
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck (runnable core)
+        run: npm run typecheck
+
+      - name: Typecheck (Golem deploy target vs real SDK)
+        run: npm run typecheck:golem
+
+      - name: Test (durability + data layer)
+        run: npm test
+
+      # Smoke test: prove the agent loop still componentizes to a WASM component
+      # using the jco toolchain (the DUR-1 path). This is our fast, credential-
+      # free signal that the code remains WASM-compatible on every PR, ahead of
+      # the heavier `golem app build` in the deploy workflow.
+      - name: Componentize smoke build (jco)
+        run: npm run build
+
+      - name: Upload component artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-wasm
+          path: dist/agent.wasm
+          if-no-files-found: error
+          retention-days: 7

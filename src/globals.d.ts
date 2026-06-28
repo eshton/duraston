@@ -19,3 +19,8 @@ declare function fetch(
   text(): Promise<string>;
   json(): Promise<unknown>;
 }>;
+
+/** WHATWG text decoder, provided by StarlingMonkey under WASI. */
+declare class TextDecoder {
+  decode(input?: Uint8Array): string;
+}

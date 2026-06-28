@@ -1,0 +1,104 @@
+name: Deploy (Golem)
+
+# The repeatable path from main -> a deployed durable worker (DUR-9).
+# Build runs automatically on main; deploy is gated behind a protected GitHub
+# Environment (require-reviewers) and the cloud profile's token.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target Golem environment (profile)
+        type: choice
+        options: [cloud, local]
+        default: cloud
+
+env:
+  # Pin the CLI so builds are reproducible. Must be compatible with the
+  # @golemcloud/golem-ts-sdk version in package.json. Bump deliberately.
+  GOLEM_CLI_VERSION: '1.2.5'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Golem CLI
+        run: |
+          set -euo pipefail
+          url="https://github.com/golemcloud/golem-cli/releases/download/v${GOLEM_CLI_VERSION}/golem-x86_64-unknown-linux-gnu"
+          curl -fsSL "$url" -o /usr/local/bin/golem
+          chmod +x /usr/local/bin/golem
+          golem --version
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Cache the Golem/WASM build intermediates so incremental builds are fast.
+      # golem-temp holds generated WIT + componentize intermediates; the npm
+      # cache is handled by setup-node above.
+      - name: Cache WASM build
+        uses: actions/cache@v4
+        with:
+          path: |
+            golem-temp
+            ~/.cache/componentize-js
+          key: golem-build-${{ runner.os }}-${{ hashFiles('package-lock.json', 'src/**', 'wit/**', 'golem.yaml') }}
+          restore-keys: |
+            golem-build-${{ runner.os }}-
+
+      - name: golem app build
+        run: npm run golem:build
+
+      - name: Upload built component
+        uses: actions/upload-artifact@v4
+        with:
+          name: concierge-wasm
+          path: dist/concierge.wasm
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Protected environment: configure required reviewers / secrets in repo
+    # settings so production deploys need explicit approval.
+    environment: ${{ github.event.inputs.environment || 'cloud' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Golem CLI
+        run: |
+          set -euo pipefail
+          url="https://github.com/golemcloud/golem-cli/releases/download/v${GOLEM_CLI_VERSION}/golem-x86_64-unknown-linux-gnu"
+          curl -fsSL "$url" -o /usr/local/bin/golem
+          chmod +x /usr/local/bin/golem
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Authenticate to Golem Cloud
+        # Token stored as a per-environment secret; never echoed.
+        run: golem profile add --set-active ci --cloud --auth-token "$GOLEM_CLOUD_TOKEN"
+        env:
+          GOLEM_CLOUD_TOKEN: ${{ secrets.GOLEM_CLOUD_TOKEN }}
+
+      - name: Provision provider secret (DUR-7)
+        # The agent reads its provider key from Golem Config/Secret, not env.
+        run: golem component env set duraston:concierge ANTHROPIC_API_KEY "$ANTHROPIC_API_KEY"
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: golem app deploy
+        run: npm run golem:deploy -- --environment "${{ github.event.inputs.environment || 'cloud' }}"

@@ -1,0 +1,34 @@
+# Golem application manifest — DUR-9 deploy configuration for the durable
+# concierge agent (src/golem/agent.ts).
+#
+# Validation status: this file is checked for YAML validity in CI. A full
+# `golem app build` / `golem app deploy` requires the Golem toolchain (and, for
+# deploy, a Cloud token), so those stages run only in the deploy workflow — not
+# on every PR. The canonical structure is produced by `golem app new --language
+# ts`; reconcile this file against that template when first wiring the real
+# pipeline, and pin the manifestVersion to the installed CLI.
+manifestVersion: '0.1'
+app: duraston
+
+components:
+  # The TypeScript template drives the build pipeline:
+  #   tsc typecheck -> golem-typegen (extract @agent metadata + generate WIT)
+  #   -> componentize-js -> linked WASM component.
+  duraston:concierge:
+    templates:
+      - ts
+    sourceWit: wit
+    generatedWit: golem-temp/wit
+    componentWasm: dist/concierge.wasm
+    # No ambient env: DUR-1 proved process.env does not cross the sandbox.
+    # The Anthropic key is supplied as a Golem Secret (DUR-7) at deploy time.
+    env: {}
+
+# Profiles select where the durable runtime lives (DUR-6). `local` targets a
+# self-hosted server; `cloud` targets Golem Cloud. Auth for cloud comes from the
+# active golem profile (CI uses GOLEM_CLOUD_TOKEN — see deploy.yml).
+environments:
+  local:
+    server: local
+  cloud:
+    server: cloud

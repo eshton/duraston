@@ -1,0 +1,10 @@
+{
+  "//": "Typechecks the Golem deploy target (src/golem) against the real SDK. Separate from the base config because these files only *build* under the Golem pipeline (DUR-9), but their types should still validate.",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "experimentalDecorators": true
+  },
+  "include": ["src/golem/**/*.ts", "src/provider.ts", "src/tools.ts", "src/durable/**/*.ts", "src/data/**/*.ts", "src/globals.d.ts"],
+  "exclude": []
+}

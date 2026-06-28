@@ -39,6 +39,13 @@ PostgREST via `fetch`). All backends share one contract. See **[DUR-8.md](./DUR-
 npm test   # builds + runs all DUR-2 and DUR-8 tests
 ```
 
+## DUR-9 — build & deploy pipeline
+
+`golem.yaml` manifest + GitHub Actions: PR CI runs typecheck (incl. the Golem
+deploy target against the real SDK), tests, and a jco component smoke build;
+the gated deploy workflow installs the Golem CLI, runs `golem app build` (cached)
+and a reviewer-gated `golem app deploy`. See **[DUR-9.md](./DUR-9.md)**.
+
 ### Layout
 
 ```
